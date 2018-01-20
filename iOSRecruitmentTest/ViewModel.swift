@@ -42,7 +42,7 @@ class ViewModel {
     }
     
     //GET ITEMS FROM SERVER
-    private func getFromServer(_ completion: @escaping (_ error: String?)->()) {
+    func getFromServer(_ completion: @escaping (_ error: String?)->()) {
         let url = URLS.server_ip.rawValue + URLS.Items.get.rawValue
         
         Alamofire.request(url).responseJSON { responseData in
@@ -57,6 +57,9 @@ class ViewModel {
                 
                 //UPDATE ITEMS
                 self.items = items
+                
+                //CLEAR DATABASE FIRST
+                ItemModel.clear()
                 
                 //SAVE ITEMS TO DATABASE
                 ItemModel.save(array: items)

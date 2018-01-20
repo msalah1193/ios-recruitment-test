@@ -16,6 +16,7 @@ class ViewController: UIViewController, UITableViewDataSource, UISearchBarDelega
     
     //MARK:- Variable(s)
     var viewModel: ViewModel?
+    private let refreshControl = UIRefreshControl()
     
     
     //MARK:- init(s)
@@ -35,6 +36,16 @@ class ViewController: UIViewController, UITableViewDataSource, UISearchBarDelega
         // Do any additional setup after loading the view.
         tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "TableViewCell")
         
+        // Configure Refresh Control
+        refreshControl.addTarget(self, action: #selector(reloadData), for: .valueChanged)
+        
+        // Add Refresh Control to Table View
+        if #available(iOS 10.0, *) {
+            self.tableView.refreshControl = refreshControl
+        } else {
+            self.tableView.addSubview(refreshControl)
+        }
+        
         //Get data
         viewModel!.getItems { errorString in
             guard let _ = errorString else {
@@ -44,6 +55,17 @@ class ViewController: UIViewController, UITableViewDataSource, UISearchBarDelega
         }
     }
 
+    //MARK:- Getting Data
+    @objc func reloadData(){
+        viewModel!.getFromServer { errorString in
+            guard let _ = errorString else {
+                self.refreshControl.endRefreshing()
+                self.tableView.reloadData()
+                return
+            }
+        }
+    }
+    
 
     // MARK: - UITableView data source
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

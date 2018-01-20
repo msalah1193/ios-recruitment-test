@@ -38,12 +38,23 @@ class ItemModel: Object, Mappable{
         url <- map["url"]
     }
     
-    //SAVING TO DATABASE
+    //MARK:- DATABASE OPERATION
     static func save(array: [ItemModel]) {
         do {
             let realm = try Realm()
             try realm.write {
                 realm.add(array)
+            }
+        } catch let error {
+            print(error.localizedDescription)
+        }
+    }
+    
+    static func clear() {
+        do {
+            let realm = try Realm()
+            try realm.write {
+                realm.deleteAll()
             }
         } catch let error {
             print(error.localizedDescription)
