@@ -19,6 +19,11 @@ class ItemModel: Object, Mappable{
     @objc dynamic var timestamp: Int = 0
     @objc dynamic var url: String!
     
+    
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+    
     required convenience init?(map: Map) {
         self.init()
     }
@@ -31,5 +36,17 @@ class ItemModel: Object, Mappable{
         name <- map["name"]
         timestamp <- map["timestamp"]
         url <- map["url"]
+    }
+    
+    //SAVING TO DATABASE
+    static func save(array: [ItemModel]) {
+        do {
+            let realm = try Realm()
+            try realm.write {
+                realm.add(array)
+            }
+        } catch let error {
+            print(error.localizedDescription)
+        }
     }
 }

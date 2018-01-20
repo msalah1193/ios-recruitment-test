@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class TableViewCell: UITableViewCell {
 
@@ -17,7 +18,16 @@ class TableViewCell: UITableViewCell {
                 itemTitleLabel.text = "Test"
                 itemDescLabel.text = "Some description"
             } else {
-                // TODO: Implement item sets
+                guard let itemModel = item as? ItemModel else {
+                    return
+                }
+                
+                if let iconURL = URL(string: itemModel.icon) {
+                    iconView.sd_setImage(with: iconURL)
+                }
+                
+                itemTitleLabel.text = itemModel.name
+                itemDescLabel.text  = itemModel.descriptionField
             }
         }
     }
