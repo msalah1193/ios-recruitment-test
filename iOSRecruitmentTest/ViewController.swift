@@ -60,24 +60,29 @@ class ViewController: UIViewController, UITableViewDataSource, UISearchBarDelega
         viewModel!.getFromServer { errorString in
             guard let _ = errorString else {
                 self.refreshControl.endRefreshing()
+                self.searchBar.text = ""
                 self.tableView.reloadData()
                 return
             }
         }
     }
     
-
-    // MARK: - UITableView data source
+    //MARK: - UITableView data source
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel!.items.count
+        return viewModel!.filteredItems.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell =  tableView.dequeueReusableCell(withIdentifier: "TableViewCell") as! TableViewCell
         
-        cell.item = viewModel!.items[indexPath.row]
+        cell.item = viewModel!.filteredItems[indexPath.row]
         
         return cell
     }
     
+    //MARK:- UISearchBar delegate
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        viewModel!.search(withString: searchText)
+        self.tableView.reloadData()
+    }
 }

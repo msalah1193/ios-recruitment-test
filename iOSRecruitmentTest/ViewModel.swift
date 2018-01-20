@@ -14,12 +14,25 @@ import ObjectMapper
 class ViewModel {
     //MARK: - Variables
     var items: [ItemModel]
+    var filteredItems: [ItemModel]
     
     //MARK:- Init
     init() {
         items = []
+        filteredItems = []
     }
     
+    //MARK:- filter items
+    func search(withString query: String) {
+        if query.isEmpty {
+            filteredItems = items
+        } else {
+            filteredItems = items.filter {
+                return $0.name.lowercased().contains(query.lowercased())
+                    || $0.descriptionField.lowercased().contains(query.lowercased())
+            }
+        }
+    }
     
     //MARK:- DATA OPERATIONS
     func getItems(completion: @escaping (_ error: String?)->()) {
@@ -30,6 +43,7 @@ class ViewModel {
             
             if itemsResult.count > 0 {
                 items.append(contentsOf: Array(itemsResult))
+                filteredItems = items
                 completion(nil)
             } else {
                 self.getFromServer(completion)
@@ -57,6 +71,7 @@ class ViewModel {
                 
                 //UPDATE ITEMS
                 self.items = items
+                self.filteredItems = items
                 
                 //CLEAR DATABASE FIRST
                 ItemModel.clear()
